@@ -76,6 +76,14 @@ export default {
     // Only handle /api/* routes — everything else falls through to static assets
     if (!path.startsWith('/api/')) return env.ASSETS.fetch(request);
 
+    // Verify DATABASE_URL exists in the environment
+    if (!env.DATABASE_URL) {
+      return json({
+        error: 'DATABASE_URL is missing. Please add it to your Cloudflare Worker environment variables.',
+        help: 'Go to Cloudflare Dashboard -> Workers & Pages -> vaultly -> Settings -> Variables and add DATABASE_URL'
+      }, 500);
+    }
+
     // Create a Neon SQL function for this request
     const sql = neon(env.DATABASE_URL);
 
