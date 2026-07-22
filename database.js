@@ -1,11 +1,30 @@
 require('dotenv').config();
-const { Pool } = require('pg');
 
-// Prefer DATABASE_URL (Neon / cloud) over individual host/port vars
+let Pool;
+
+// Detect if we are running in a Cloudflare Worker environment
+const isWorker = typeof globalThis.WebSocket !== 'undefined' && typeof globalThis.navigator === 'undefined';
+
+if (isWorker || (process.env.DATABASE_URL && process.env.DATABASE_URL.includes('neon.tech'))) {
+  // Use Neon serverless driver designed for serverless edge runtimes (connects over WebSockets)
+  const { Pool: NeonPool, neonConfig } = require('@neondatabase/serverless');
+  
+  if (typeof globalThis.WebSocket !== 'undefined') {
+    neonConfig.webSocketConstructor = globalThis.WebSocket;
+  }
+  
+  Pool = NeonPool;
+  console.log('🔌 database: using @neondatabase/serverless driver');
+} else {
+  // Use standard pg driver for traditional Node.js environments (connects over TCP)
+  Pool = require('pg').Pool;
+  console.log('🔌 database: using standard pg driver');
+}
+
 const pool = process.env.DATABASE_URL
   ? new Pool({
       connectionString: process.env.DATABASE_URL,
-      ssl: { rejectUnauthorized: false }, // Required for Neon TLS
+      ssl: { rejectUnauthorized: false }, // Required for secure TLS connections
     })
   : new Pool({
       host:     process.env.DB_HOST     || 'localhost',
