@@ -1,0 +1,14 @@
+node_modules/
+.git/
+.github/
+.env
+.env.example
+.gitignore
+server.js
+database.js
+init-db.js
+worker.js
+functions/
+package.json
+package-lock.json
+wrangler.jsonc
