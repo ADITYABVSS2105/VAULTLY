@@ -53,13 +53,11 @@ async function signToken(payload, env) {
 
 async function verifyToken(request, env) {
   const auth = request.headers.get('Authorization');
-  if (!auth || !auth.startsWith('Bearer ')) return null;
-  try {
-    const { payload } = await jwtVerify(auth.slice(7), getSecret(env));
-    return payload;
-  } catch {
-    return null;
+  if (!auth || !auth.startsWith('Bearer ')) {
+    throw new Error('Authorization header is missing or invalid.');
   }
+  const { payload } = await jwtVerify(auth.slice(7), getSecret(env));
+  return payload;
 }
 
 // ─── Router ─────────────────────────────────────────────────────
@@ -144,8 +142,12 @@ export default {
       }
 
       // ── Protected routes below ──
-      const auth = await verifyToken(request, env);
-      if (!auth) return json({ error: 'Missing or invalid Authorization header' }, 401);
+      let auth;
+      try {
+        auth = await verifyToken(request, env);
+      } catch (err) {
+        return json({ error: 'Unauthorized', details: err.message }, 401);
+      }
       const userId = auth.userId;
 
       // ── GET Transactions ──
