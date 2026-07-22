@@ -9,5 +9,9 @@
   "assets": {
     "directory": "./public",
     "binding": "ASSETS"
+  },
+  "vars": {
+    "DATABASE_URL": "postgresql://neondb_owner:npg_FGLuUIgch1E2@ep-shy-field-aym6p8o0.c-5.us-east-2.aws.neon.tech/neondb?sslmode=require",
+    "JWT_SECRET": "vaultly_super_secret_jwt_key_change_me_in_production"
   }
 }
