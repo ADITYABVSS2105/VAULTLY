@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vaultly — Every Rupee, Accounted For</title>
+  <meta name="description" content="Vaultly is your personal daily money tracker. Log credits, debits, and manage your budget in Indian Rupees.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- ====================================================
+       AUTH SCREEN
+  ===================================================== -->
+  <div id="authContainer" class="auth-root">
+
+    <!-- Left Panel — Brand showcase -->
+    <div class="auth-left">
+      <div class="auth-left-inner">
+        <div class="v-brand">
+          <div class="v-logo-icon"><i class="ri-safe-2-line"></i></div>
+          <span class="v-logo-name">Vaultly</span>
+        </div>
+
+        <h1 class="auth-headline">
+          Every rupee<br>
+          <em>accounted for.</em>
+        </h1>
+        <p class="auth-left-sub">Track your daily income and spending, set budgets, and understand where your money actually goes.</p>
+
+        <!-- Floating sample cards -->
+        <div class="sample-cards">
+          <div class="sample-card sc-credit">
+            <div class="sc-icon"><i class="ri-arrow-down-circle-fill"></i></div>
+            <div class="sc-body">
+              <span>Freelance Payment</span>
+              <strong class="sc-amount">+₹14,500</strong>
+            </div>
+          </div>
+          <div class="sample-card sc-debit">
+            <div class="sc-icon"><i class="ri-arrow-up-circle-fill"></i></div>
+            <div class="sc-body">
+              <span>Swiggy Order</span>
+              <strong class="sc-amount">−₹340</strong>
+            </div>
+          </div>
+          <div class="sample-card sc-balance">
+            <span class="sc-label">Net Balance</span>
+            <span class="sc-big">₹91,550</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel — Auth form -->
+    <div class="auth-right">
+      <div class="auth-form-container">
+        <!-- Mobile-only brand -->
+        <div class="v-brand v-brand-mobile">
+          <div class="v-logo-icon"><i class="ri-safe-2-line"></i></div>
+          <span class="v-logo-name">Vaultly</span>
+        </div>
+
+        <div class="auth-form-header">
+          <h2 id="authTitle">Sign in</h2>
+          <p id="authSubtitle" class="auth-form-sub">Welcome back. Enter your details below.</p>
+        </div>
+
+        <form id="authForm" onsubmit="handleAuthSubmit(event)">
+          <div class="form-field hidden" id="nameGroup">
+            <label for="authName">Full name</label>
+            <div class="field-wrap">
+              <i class="ri-user-line field-icon"></i>
+              <input type="text" id="authName" placeholder="Your name" autocomplete="name">
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="authEmail">Email address</label>
+            <div class="field-wrap">
+              <i class="ri-mail-line field-icon"></i>
+              <input type="email" id="authEmail" required placeholder="name@email.com" value="user@demo.com" autocomplete="email">
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="authPassword">Password</label>
+            <div class="field-wrap">
+              <i class="ri-lock-line field-icon"></i>
+              <input type="password" id="authPassword" required placeholder="••••••••" value="demo1234" autocomplete="current-password">
+            </div>
+          </div>
+          <button type="submit" id="authSubmitBtn" class="btn btn-primary full-w">
+            Sign in <i class="ri-arrow-right-line"></i>
+          </button>
+        </form>
+
+        <div class="divider-row"><span>or</span></div>
+
+        <button type="button" class="btn btn-ghost-outline full-w" onclick="loginAsDemo()">
+          <i class="ri-flashlight-line"></i> Try demo account
+        </button>
+
+        <p class="auth-switch-line" id="authToggleText">
+          No account? <a href="#" onclick="toggleAuthMode(event)">Create one free</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================
+       DASHBOARD
+  ===================================================== -->
+  <div id="appContainer" class="app-shell" style="display:none;">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sb-top">
+        <div class="v-brand sb-brand">
+          <div class="v-logo-icon sm"><i class="ri-safe-2-line"></i></div>
+          <span class="v-logo-name">Vaultly</span>
+        </div>
+        <nav class="sb-nav">
+          <a class="sb-link active" href="#">
+            <i class="ri-layout-grid-line"></i><span>Overview</span>
+          </a>
+          <a class="sb-link" href="#" onclick="scrollToSection('txSection', event)">
+            <i class="ri-swap-line"></i><span>Transactions</span>
+          </a>
+          <a class="sb-link" href="#" onclick="scrollToSection('analyticsSection', event)">
+            <i class="ri-pie-chart-2-line"></i><span>Analytics</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="sb-bottom">
+        <button class="theme-btn" onclick="toggleTheme()">
+          <i id="themeIcon" class="ri-moon-line"></i>
+          <span id="themeLabel">Dark mode</span>
+        </button>
+        <div class="sb-user" onclick="logout()" title="Logout">
+          <div class="user-avatar" id="userAvatar">R</div>
+          <div class="sb-user-text">
+            <span class="sb-username" id="userNameDisplay">Rahul Sharma</span>
+            <span class="sb-logout">Click to log out</span>
+          </div>
+          <i class="ri-logout-box-r-line sb-logout-icon"></i>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <div class="main-area">
+
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 class="topbar-title">Overview</h1>
+          <span class="topbar-date" id="todayDate"></span>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-primary" onclick="openTransactionModal()">
+            <i class="ri-add-line"></i> New Entry
+          </button>
+        </div>
+      </header>
+
+      <main class="page-scroll">
+
+        <!-- STAT CARDS -->
+        <section class="stats-grid">
+          <div class="s-card s-balance">
+            <div class="s-top">
+              <span class="s-label">Net Balance</span>
+              <div class="s-icon-box neutral-box"><i class="ri-wallet-3-line"></i></div>
+            </div>
+            <p class="s-value" id="netBalance">₹0</p>
+            <span class="s-chip" id="savingsRateBadge">0% savings rate</span>
+          </div>
+          <div class="s-card s-credit">
+            <div class="s-top">
+              <span class="s-label">Money In</span>
+              <div class="s-icon-box credit-box"><i class="ri-arrow-down-circle-line"></i></div>
+            </div>
+            <p class="s-value credit-val" id="totalCredit">+₹0</p>
+            <span class="s-note">Total credit received</span>
+          </div>
+          <div class="s-card s-debit">
+            <div class="s-top">
+              <span class="s-label">Money Out</span>
+              <div class="s-icon-box debit-box"><i class="ri-arrow-up-circle-line"></i></div>
+            </div>
+            <p class="s-value debit-val" id="totalDebit">−₹0</p>
+            <span class="s-note">Total expenses paid</span>
+          </div>
+          <div class="s-card s-avg">
+            <div class="s-top">
+              <span class="s-label">Daily Average</span>
+              <div class="s-icon-box neutral-box"><i class="ri-calendar-line"></i></div>
+            </div>
+            <p class="s-value" id="dailyAverage">₹0</p>
+            <span class="s-note">Avg spending per day</span>
+          </div>
+        </section>
+
+        <!-- ANALYTICS SECTION -->
+        <section class="two-col" id="analyticsSection">
+          <div class="v-card chart-card">
+            <div class="v-card-hd">
+              <h3>Spending by Category</h3>
+              <span class="v-badge">Debits</span>
+            </div>
+            <div class="chart-body">
+              <canvas id="categoryChart" width="320" height="210"></canvas>
+              <div id="emptyChartMessage" class="chart-empty" style="display:none;">
+                <i class="ri-donut-chart-line"></i>
+                <p>No expense data yet</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="v-card budget-card">
+            <div class="v-card-hd">
+              <h3>Monthly Budget</h3>
+              <button class="btn-tiny" onclick="promptSetBudget()">
+                <i class="ri-settings-3-line"></i> Set limits
+              </button>
+            </div>
+            <div id="budgetList" class="budget-rows"></div>
+          </div>
+        </section>
+
+        <!-- TRANSACTIONS -->
+        <section class="v-card tx-card" id="txSection">
+          <div class="tx-top">
+            <div class="tx-title-wrap">
+              <h3>All Transactions</h3>
+              <span class="tx-pill" id="transactionCount">0 entries</span>
+            </div>
+            <div class="filter-row">
+              <div class="search-field">
+                <i class="ri-search-line"></i>
+                <input type="text" id="searchInput" placeholder="Search…" oninput="handleFilterChange()">
+              </div>
+              <select id="typeFilter" class="mini-select" onchange="handleFilterChange()">
+                <option value="all">All types</option>
+                <option value="credit">Credit</option>
+                <option value="debit">Debit</option>
+              </select>
+              <select id="categoryFilter" class="mini-select" onchange="handleFilterChange()">
+                <option value="all">All categories</option>
+                <option value="Food & Dining">Food & Dining</option>
+                <option value="Shopping & Clothes">Shopping</option>
+                <option value="Bills & Utilities">Bills</option>
+                <option value="Travel & Transport">Transport</option>
+                <option value="Salary & Wages">Salary</option>
+                <option value="Freelance & Side Income">Freelance</option>
+                <option value="Entertainment & Movies">Entertainment</option>
+                <option value="Health & Medical">Health</option>
+                <option value="Investments & Savings">Investments</option>
+                <option value="Other">Other</option>
+              </select>
+              <button class="icon-btn" onclick="resetFilters()" title="Reset filters">
+                <i class="ri-refresh-line"></i>
+              </button>
+            </div>
+          </div>
+
+          <div id="timelineContainer" class="timeline-wrap"></div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ====================================================
+       ADD / EDIT TRANSACTION MODAL
+  ===================================================== -->
+  <div id="transactionModal" class="modal-overlay" onclick="closeModalOnBackdrop(event)">
+    <div class="modal-sheet">
+      <div class="modal-sheet-hd">
+        <h3 id="modalTitle">New transaction</h3>
+        <button class="close-modal-btn" onclick="closeTransactionModal()">
+          <i class="ri-close-line"></i>
+        </button>
+      </div>
+
+      <form id="transactionForm" onsubmit="saveTransaction(event)">
+        <input type="hidden" id="txId">
+
+        <!-- Type Toggle -->
+        <div class="type-toggle">
+          <label class="toggle-opt opt-debit active" id="typeDebitLabel">
+            <input type="radio" name="txType" value="debit" checked onchange="updateTypeUI()">
+            <i class="ri-arrow-up-circle-fill"></i> Debit
+          </label>
+          <label class="toggle-opt opt-credit" id="typeCreditLabel">
+            <input type="radio" name="txType" value="credit" onchange="updateTypeUI()">
+            <i class="ri-arrow-down-circle-fill"></i> Credit
+          </label>
+        </div>
+
+        <div class="form-field">
+          <label for="txTitle">Description</label>
+          <input type="text" id="txTitle" required placeholder="e.g. Salary credited, Grocery run…">
+        </div>
+
+        <div class="form-pair">
+          <div class="form-field">
+            <label for="txAmount">Amount (₹)</label>
+            <div class="rupee-field">
+              <span class="rupee-glyph">₹</span>
+              <input type="number" id="txAmount" required step="1" min="1" placeholder="0">
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="txDate">Date</label>
+            <input type="date" id="txDate" required>
+          </div>
+        </div>
+
+        <div class="form-pair">
+          <div class="form-field">
+            <label for="txCategory">Category</label>
+            <select id="txCategory" required></select>
+          </div>
+          <div class="form-field">
+            <label for="txMethod">Paid via</label>
+            <select id="txMethod">
+              <option value="UPI (GPay/PhonePe)">UPI — GPay / PhonePe</option>
+              <option value="Cash">Cash</option>
+              <option value="Credit Card">Credit Card</option>
+              <option value="Debit Card">Debit Card</option>
+              <option value="Net Banking">Net Banking</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label for="txNote">Note <span class="optional-tag">(optional)</span></label>
+          <input type="text" id="txNote" placeholder="Any short note or reference…">
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-subtle" onclick="closeTransactionModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save entry</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
