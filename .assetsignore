@@ -12,3 +12,5 @@ functions/
 package.json
 package-lock.json
 wrangler.jsonc
+copy-assets.js
+
