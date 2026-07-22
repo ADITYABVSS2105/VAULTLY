@@ -302,11 +302,14 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// ─────────────────────────────────────────────
-// Start Server
-// ─────────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log(`\n🟢 Vaultly server running at http://localhost:${PORT}`);
-  console.log(`   Database: ${process.env.DB_NAME || 'vaultly'} @ ${process.env.DB_HOST || 'localhost'}`);
-  console.log(`   Run "node init-db.js" first if this is a fresh setup.\n`);
-});
+// Export app for serverless / workers
+module.exports = app;
+
+// Start Server only if run directly
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`\n🟢 Vaultly server running at http://localhost:${PORT}`);
+    console.log(`   Database: ${process.env.DB_NAME || 'vaultly'} @ ${process.env.DB_HOST || 'localhost'}`);
+    console.log(`   Run "node init-db.js" first if this is a fresh setup.\n`);
+  });
+}
