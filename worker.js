@@ -40,7 +40,7 @@ function cors() {
 }
 
 function getSecret(env) {
-  const raw = env.JWT_SECRET || 'vaultly_dev_secret';
+  const raw = env.JWT_SECRET || 'vaultly_dev_secret_must_be_at_least_32_bytes_long_to_be_secure_for_jose';
   return new TextEncoder().encode(raw);
 }
 

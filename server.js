@@ -13,7 +13,7 @@ const db      = require('./database');
 
 const app        = express();
 const PORT       = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'vaultly_dev_secret';
+const JWT_SECRET = process.env.JWT_SECRET || 'vaultly_dev_secret_must_be_at_least_32_bytes_long_to_be_secure_for_jose';
 
 app.use(cors());
 app.use(express.json());
