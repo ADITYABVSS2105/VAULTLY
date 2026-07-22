@@ -14,6 +14,11 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+# Wrangler temporary directory
+.wrangler/
+.assetsignore
+curl_output.txt
+
 # OS files
 .DS_Store
 Thumbs.db
